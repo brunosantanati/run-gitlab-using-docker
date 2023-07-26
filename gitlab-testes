@@ -1,0 +1,55 @@
+Rodar o GitLab usando Docker
+
+Versão enterprise
+https://docs.gitlab.com/ee/install/docker.html
+https://hub.docker.com/r/gitlab/gitlab-ee/
+https://hub.docker.com/r/gitlab/gitlab-ee/tags
+
+Versão community
+https://hub.docker.com/r/gitlab/gitlab-ce
+https://hub.docker.com/r/gitlab/gitlab-ce/tags
+
+1-Criar o diretório:
+/home/bruno/gitlab
+
+2-Adicionar no .bashrc a linha:
+export GITLAB_HOME=/home/bruno/gitlab
+e conferir:
+echo $GITLAB_HOME
+
+3-Dar source no .bashrc:
+source .bashrc
+
+4-Baixar e rodar a imagem do GitLab:
+sudo docker run --detach \
+  --hostname gitlab.example.com \
+  --publish 443:443 --publish 80:80 --publish 22:22 \
+  --name gitlab \
+  --restart always \
+  --volume $GITLAB_HOME/config:/etc/gitlab:Z \
+  --volume $GITLAB_HOME/logs:/var/log/gitlab:Z \
+  --volume $GITLAB_HOME/data:/var/opt/gitlab:Z \
+  --shm-size 256m \
+  gitlab/gitlab-ee:latest
+
+No meu caso, tive que usar a versão da tag:
+sudo docker run --detach \
+  --hostname gitlab.example.com \
+  --publish 443:443 --publish 80:80 --publish 22:22 \
+  --name gitlab \
+  --restart always \
+  --volume $GITLAB_HOME/config:/etc/gitlab:Z \
+  --volume $GITLAB_HOME/logs:/var/log/gitlab:Z \
+  --volume $GITLAB_HOME/data:/var/opt/gitlab:Z \
+  --shm-size 256m \
+  gitlab/gitlab-ee:12.8.7-ee.0
+
+5-Pegar o ip do container:
+docker inspect gitlab | grep IPAddress
+
+6-Acessar o GitLab no browser usando o ip:
+http://172.17.0.2
+
+7-Cadastre uma nova senha na tela que aparece e depois logue com:
+user: root
+senha: a que cadastrou
